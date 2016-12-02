@@ -6,6 +6,7 @@
 #include "gdal_field_defn.hpp"
 #include "gdal_layer.hpp"
 #include "collections/feature_fields.hpp"
+#include "utils/v8_helper.hpp"
 
 namespace node_gdal {
 
@@ -143,7 +144,7 @@ NAN_METHOD(Feature::New)
 	}
 
 	Local<Value> fields = FeatureFields::New(info.This());
-	info.This()->SetHiddenValue(Nan::New("fields_").ToLocalChecked(), fields);
+	v8_helper::SetPrivate(info.This(), Nan::New("fields_").ToLocalChecked(), fields);
 
 	f->Wrap(info.This());
 	info.GetReturnValue().Set(info.This());
@@ -386,7 +387,8 @@ NAN_METHOD(Feature::setFrom)
 NAN_GETTER(Feature::fieldsGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("fields_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("fields_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 /**

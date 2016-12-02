@@ -3,6 +3,7 @@
 #include "gdal_feature_defn.hpp"
 #include "gdal_field_defn.hpp"
 #include "collections/feature_defn_fields.hpp"
+#include "utils/v8_helper.hpp"
 
 namespace node_gdal {
 
@@ -85,7 +86,7 @@ NAN_METHOD(FeatureDefn::New)
 	}
 
 	Local<Value> fields = FeatureDefnFields::New(info.This());
-	info.This()->SetHiddenValue(Nan::New("fields_").ToLocalChecked(), fields);
+	v8_helper::SetPrivate(info.This(), Nan::New("fields_").ToLocalChecked(), fields);
 
 	f->Wrap(info.This());
 	info.GetReturnValue().Set(info.This());
@@ -201,7 +202,8 @@ NAN_GETTER(FeatureDefn::styleIgnoredGetter)
 NAN_GETTER(FeatureDefn::fieldsGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("fields_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("fields_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 NAN_SETTER(FeatureDefn::geomTypeSetter)

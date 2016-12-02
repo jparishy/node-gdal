@@ -4,6 +4,7 @@
 #include "../gdal_spatial_reference.hpp"
 #include "dataset_layers.hpp"
 #include "../utils/string_list.hpp"
+#include "../utils/v8_helper.hpp"
 
 namespace node_gdal {
 
@@ -75,7 +76,7 @@ Local<Value> DatasetLayers::New(Local<Value> ds_obj)
 
 	v8::Local<v8::Value> ext = Nan::New<External>(wrapped);
 	v8::Local<v8::Object> obj = Nan::New(DatasetLayers::constructor)->GetFunction()->NewInstance(1, &ext);
-	obj->SetHiddenValue(Nan::New("parent_").ToLocalChecked(), ds_obj);
+	v8_helper::SetPrivate(obj, Nan::New("parent_").ToLocalChecked(), ds_obj);
 
 	return scope.Escape(obj);
 }
@@ -96,8 +97,8 @@ NAN_METHOD(DatasetLayers::toString)
 NAN_METHOD(DatasetLayers::get)
 {
 	Nan::HandleScope scope;
-
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	Dataset *ds = Nan::ObjectWrap::Unwrap<Dataset>(parent);
 	
 	if (!ds->isAlive()) {
@@ -155,7 +156,7 @@ NAN_METHOD(DatasetLayers::create)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	Dataset *ds = Nan::ObjectWrap::Unwrap<Dataset>(parent);
 	
 	if (!ds->isAlive()) {
@@ -212,7 +213,7 @@ NAN_METHOD(DatasetLayers::count)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	Dataset *ds = Nan::ObjectWrap::Unwrap<Dataset>(parent);
 	
 	if (!ds->isAlive()) {
@@ -246,7 +247,7 @@ NAN_METHOD(DatasetLayers::copy)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	Dataset *ds = Nan::ObjectWrap::Unwrap<Dataset>(parent);
 	
 	if (!ds->isAlive()) {
@@ -298,7 +299,7 @@ NAN_METHOD(DatasetLayers::remove)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	Dataset *ds = Nan::ObjectWrap::Unwrap<Dataset>(parent);
 	
 	if (!ds->isAlive()) {
@@ -337,7 +338,8 @@ NAN_METHOD(DatasetLayers::remove)
 NAN_GETTER(DatasetLayers::dsGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 } // namespace node_gdal

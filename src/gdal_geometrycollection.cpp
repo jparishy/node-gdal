@@ -3,6 +3,7 @@
 #include "gdal_geometry.hpp"
 #include "gdal_geometrycollection.hpp"
 #include "collections/geometry_collection_children.hpp"
+#include "utils/v8_helper.hpp"
 
 #include <stdlib.h>
 
@@ -92,7 +93,7 @@ NAN_METHOD(GeometryCollection::New)
 	}
 
 	Local<Value> children = GeometryCollectionChildren::New(info.This());
-	info.This()->SetHiddenValue(Nan::New("children_").ToLocalChecked(), children);
+	v8_helper::SetPrivate(info.This(), Nan::New("children_").ToLocalChecked(), children);
 
 	f->Wrap(info.This());
 	info.GetReturnValue().Set(info.This());
@@ -164,7 +165,8 @@ NODE_WRAPPED_METHOD_WITH_RESULT(GeometryCollection, getLength, Number, get_Lengt
 NAN_GETTER(GeometryCollection::childrenGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("children_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("children_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 } // namespace node_gdal

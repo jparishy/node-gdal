@@ -3,6 +3,7 @@
 #include "gdal_geometry.hpp"
 #include "gdal_polygon.hpp"
 #include "collections/polygon_rings.hpp"
+#include "utils/v8_helper.hpp"
 
 #include <stdlib.h>
 
@@ -91,7 +92,7 @@ NAN_METHOD(Polygon::New)
 	}
 
 	Local<Value> rings = PolygonRings::New(info.This());
-	info.This()->SetHiddenValue(Nan::New("rings_").ToLocalChecked(), rings);
+	v8_helper::SetPrivate(info.This(), Nan::New("rings_").ToLocalChecked(), rings);
 
 	f->Wrap(info.This());
 	info.GetReturnValue().Set(info.This());
@@ -135,6 +136,7 @@ NAN_METHOD(Polygon::toString)
 {
 	Nan::HandleScope scope;
 	info.GetReturnValue().Set(Nan::New("Polygon").ToLocalChecked());
+
 }
 
 /**
@@ -154,7 +156,8 @@ NODE_WRAPPED_METHOD_WITH_RESULT(Polygon, getArea, Number, get_Area);
 NAN_GETTER(Polygon::ringsGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("rings_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("rings_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 } // namespace node_gdal

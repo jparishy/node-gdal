@@ -3,6 +3,7 @@
 #include "../gdal_linestring.hpp"
 #include "../gdal_point.hpp"
 #include "linestring_points.hpp"
+#include "../utils/v8_helper.hpp"
 
 namespace node_gdal {
 
@@ -70,7 +71,7 @@ Local<Value> LineStringPoints::New(Local<Value> geom)
 
 	v8::Local<v8::Value> ext = Nan::New<External>(wrapped);
 	v8::Local<v8::Object> obj = Nan::New(LineStringPoints::constructor)->GetFunction()->NewInstance(1, &ext);
-	obj->SetHiddenValue(Nan::New("parent_").ToLocalChecked(), geom);
+	v8_helper::SetPrivate(obj, Nan::New("parent_").ToLocalChecked(), geom);
 
 	return scope.Escape(obj);
 }
@@ -91,7 +92,7 @@ NAN_METHOD(LineStringPoints::count)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	LineString *geom = Nan::ObjectWrap::Unwrap<LineString>(parent);
 
 	info.GetReturnValue().Set(Nan::New<Integer>(geom->get()->getNumPoints()));
@@ -106,7 +107,7 @@ NAN_METHOD(LineStringPoints::reverse)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	LineString *geom = Nan::ObjectWrap::Unwrap<LineString>(parent);
 
 	geom->get()->reversePoints();
@@ -124,7 +125,7 @@ NAN_METHOD(LineStringPoints::resize)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	LineString *geom = Nan::ObjectWrap::Unwrap<LineString>(parent);
 
 	int count;
@@ -145,7 +146,7 @@ NAN_METHOD(LineStringPoints::get)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	LineString *geom = Nan::ObjectWrap::Unwrap<LineString>(parent);
 
 	OGRPoint *pt = new OGRPoint();
@@ -178,7 +179,7 @@ NAN_METHOD(LineStringPoints::set)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	LineString *geom = Nan::ObjectWrap::Unwrap<LineString>(parent);
 
 	int i;
@@ -265,7 +266,7 @@ NAN_METHOD(LineStringPoints::add)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	LineString *geom = Nan::ObjectWrap::Unwrap<LineString>(parent);
 
 	int n = info.Length();

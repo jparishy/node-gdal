@@ -4,6 +4,7 @@
 #include "gdal_linearring.hpp"
 #include "gdal_linestring.hpp"
 #include "collections/linestring_points.hpp"
+#include "utils/v8_helper.hpp"
 
 #include <stdlib.h>
 
@@ -90,7 +91,7 @@ NAN_METHOD(LinearRing::New)
 	}
 
 	Local<Value> points = LineStringPoints::New(info.This());
-	info.This()->SetHiddenValue(Nan::New("points_").ToLocalChecked(), points);
+	v8_helper::SetPrivate(info.This(), Nan::New("points_").ToLocalChecked(), points);
 
 	f->Wrap(info.This());
 	info.GetReturnValue().Set(info.This());

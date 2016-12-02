@@ -1,6 +1,7 @@
 #include "../gdal_common.hpp"
 #include "../gdal_rasterband.hpp"
 #include "rasterband_overviews.hpp"
+#include "../utils/v8_helper.hpp"
 
 namespace node_gdal {
 
@@ -66,7 +67,7 @@ Local<Value> RasterBandOverviews::New(Local<Value> band_obj)
 
 	v8::Local<v8::Value> ext = Nan::New<External>(wrapped);
 	v8::Local<v8::Object> obj = Nan::New(RasterBandOverviews::constructor)->GetFunction()->NewInstance(1, &ext);
-	obj->SetHiddenValue(Nan::New("parent_").ToLocalChecked(), band_obj);
+	v8_helper::SetPrivate(obj, Nan::New("parent_").ToLocalChecked(), band_obj);
 
 	return scope.Escape(obj);
 }
@@ -89,7 +90,7 @@ NAN_METHOD(RasterBandOverviews::get)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	RasterBand *band = Nan::ObjectWrap::Unwrap<RasterBand>(parent);
 	if (!band->isAlive()) {
 		Nan::ThrowError("RasterBand object has already been destroyed");
@@ -127,7 +128,7 @@ NAN_METHOD(RasterBandOverviews::getBySampleCount)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	RasterBand *band = Nan::ObjectWrap::Unwrap<RasterBand>(parent);
 	if (!band->isAlive()) {
 		Nan::ThrowError("RasterBand object has already been destroyed");
@@ -152,7 +153,7 @@ NAN_METHOD(RasterBandOverviews::count)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	RasterBand *band = Nan::ObjectWrap::Unwrap<RasterBand>(parent);
 	if (!band->isAlive()) {
 		Nan::ThrowError("RasterBand object has already been destroyed");

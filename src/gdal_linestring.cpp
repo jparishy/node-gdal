@@ -4,6 +4,7 @@
 #include "gdal_linestring.hpp"
 #include "gdal_point.hpp"
 #include "collections/linestring_points.hpp"
+#include "utils/v8_helper.hpp"
 
 #include <stdlib.h>
 
@@ -99,7 +100,7 @@ NAN_METHOD(LineString::New)
 	}
 
 	Local<Value> points = LineStringPoints::New(info.This());
-	info.This()->SetHiddenValue(Nan::New("points_").ToLocalChecked(), points);
+	v8_helper::SetPrivate(info.This(), Nan::New("points_").ToLocalChecked(), points);
 
 	f->Wrap(info.This());
 	info.GetReturnValue().Set(info.This());
@@ -223,7 +224,8 @@ NAN_METHOD(LineString::addSubLineString)
 NAN_GETTER(LineString::pointsGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("points_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("points_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 } // namespace node_gdal

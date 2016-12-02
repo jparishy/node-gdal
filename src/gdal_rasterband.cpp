@@ -6,6 +6,7 @@
 #include "gdal_dataset.hpp"
 #include "collections/rasterband_overviews.hpp"
 #include "collections/rasterband_pixels.hpp"
+#include "utils/v8_helper.hpp"
 
 #include <limits>
 #include <cpl_port.h>
@@ -118,9 +119,10 @@ NAN_METHOD(RasterBand::New)
 		f->Wrap(info.This());
 
 		Local<Value> overviews = RasterBandOverviews::New(info.This());
-		info.This()->SetHiddenValue(Nan::New("overviews_").ToLocalChecked(), overviews);
+		v8_helper::SetPrivate(info.This(), Nan::New("overviews_").ToLocalChecked(), overviews);
+
 		Local<Value> pixels = RasterBandPixels::New(info.This());
-		info.This()->SetHiddenValue(Nan::New("pixels_").ToLocalChecked(), pixels);
+		v8_helper::SetPrivate(info.This(), Nan::New("pixels_").ToLocalChecked(), pixels);
 
 		info.GetReturnValue().Set(info.This());
 		return;
@@ -165,7 +167,7 @@ Local<Value> RasterBand::New(GDALRasterBand *raw, GDALDataset *raw_parent)
 	long parent_uid = Nan::ObjectWrap::Unwrap<Dataset>(ds)->uid;
 	wrapped->uid = ptr_manager.add(raw, parent_uid);
 	wrapped->parent_ds = raw_parent;
-	obj->SetHiddenValue(Nan::New("ds_").ToLocalChecked(), ds);
+	v8_helper::SetPrivate(obj, Nan::New("ds_").ToLocalChecked(), ds);
 
 	return scope.Escape(obj);
 }
@@ -451,7 +453,8 @@ NAN_METHOD(RasterBand::getMetadata)
 NAN_GETTER(RasterBand::dsGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("ds_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("ds_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 /**
@@ -462,7 +465,8 @@ NAN_GETTER(RasterBand::dsGetter)
 NAN_GETTER(RasterBand::overviewsGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("overviews_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("overviews_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 /**
@@ -473,7 +477,8 @@ NAN_GETTER(RasterBand::overviewsGetter)
 NAN_GETTER(RasterBand::pixelsGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("pixels_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("pixels_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 /**

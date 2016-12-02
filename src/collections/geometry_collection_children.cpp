@@ -2,6 +2,7 @@
 #include "../gdal_geometry.hpp"
 #include "../gdal_geometrycollection.hpp"
 #include "geometry_collection_children.hpp"
+#include "../utils/v8_helper.hpp"
 
 namespace node_gdal {
 
@@ -67,7 +68,7 @@ Local<Value> GeometryCollectionChildren::New(Local<Value> geom)
 
 	v8::Local<v8::Value> ext = Nan::New<External>(wrapped);
 	v8::Local<v8::Object> obj = Nan::New(GeometryCollectionChildren::constructor)->GetFunction()->NewInstance(1, &ext);
-	obj->SetHiddenValue(Nan::New("parent_").ToLocalChecked(), geom);
+	v8_helper::SetPrivate(obj, Nan::New("parent_").ToLocalChecked(), geom);
 
 	return scope.Escape(obj);
 }
@@ -88,7 +89,7 @@ NAN_METHOD(GeometryCollectionChildren::count)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	GeometryCollection *geom = Nan::ObjectWrap::Unwrap<GeometryCollection>(parent);
 
 	info.GetReturnValue().Set(Nan::New<Integer>(geom->get()->getNumGeometries()));
@@ -105,7 +106,7 @@ NAN_METHOD(GeometryCollectionChildren::get)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	GeometryCollection *geom = Nan::ObjectWrap::Unwrap<GeometryCollection>(parent);
 
 	int i;
@@ -124,7 +125,7 @@ NAN_METHOD(GeometryCollectionChildren::remove)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	GeometryCollection *geom = Nan::ObjectWrap::Unwrap<GeometryCollection>(parent);
 
 	int i;
@@ -160,7 +161,7 @@ NAN_METHOD(GeometryCollectionChildren::add)
 {
 	Nan::HandleScope scope;
 
-	Local<Object> parent = info.This()->GetHiddenValue(Nan::New("parent_").ToLocalChecked()).As<Object>();
+	Local<Object> parent = v8_helper::GetPrivate(info.This(), Nan::New("parent_").ToLocalChecked()).As<Object>();
 	GeometryCollection *geom = Nan::ObjectWrap::Unwrap<GeometryCollection>(parent);
 
 	Geometry *child;

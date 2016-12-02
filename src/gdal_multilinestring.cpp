@@ -5,6 +5,7 @@
 #include "gdal_multilinestring.hpp"
 #include "gdal_linestring.hpp"
 #include "collections/geometry_collection_children.hpp"
+#include "utils/v8_helper.hpp"
 
 #include <stdlib.h>
 
@@ -88,7 +89,7 @@ NAN_METHOD(MultiLineString::New)
 	}
 
 	Local<Value> children = GeometryCollectionChildren::New(info.This());
-	info.This()->SetHiddenValue(Nan::New("children_").ToLocalChecked(), children);
+	v8_helper::SetPrivate(info.This(), Nan::New("children_").ToLocalChecked(), children);
 
 	f->Wrap(info.This());
 	info.GetReturnValue().Set(info.This());

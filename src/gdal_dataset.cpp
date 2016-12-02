@@ -8,6 +8,7 @@
 #include "gdal_geometry.hpp"
 #include "collections/dataset_bands.hpp"
 #include "collections/dataset_layers.hpp"
+#include "utils/v8_helper.hpp"
 
 namespace node_gdal {
 
@@ -144,10 +145,20 @@ NAN_METHOD(Dataset::New)
 		f->Wrap(info.This());
 
 		Local<Value> bands = DatasetBands::New(info.This());
-		info.This()->SetHiddenValue(Nan::New("bands_").ToLocalChecked(), bands);
+		if (!bands.IsEmpty()) {
+		    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+		    v8::Local<v8::Context> context = isolate->GetCurrentContext();
+		    v8::Local<v8::Private> privateKey = v8::Private::ForApi(isolate, Nan::New("bands_").ToLocalChecked());
+		    info.This()->SetPrivate(context, privateKey, bands);
+		}
 
 		Local<Value> layers = DatasetLayers::New(info.This());
-		info.This()->SetHiddenValue(Nan::New("layers_").ToLocalChecked(), layers);
+		if (!layers.IsEmpty()) {
+		    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+		    v8::Local<v8::Context> context = isolate->GetCurrentContext();
+		    v8::Local<v8::Private> privateKey = v8::Private::ForApi(isolate, Nan::New("layers_").ToLocalChecked());
+		    info.This()->SetPrivate(context, privateKey, layers);
+		}
 
 		info.GetReturnValue().Set(info.This());
 		return;
@@ -974,7 +985,8 @@ NAN_SETTER(Dataset::geoTransformSetter)
 NAN_GETTER(Dataset::bandsGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("bands_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("bands_").ToLocalChecked());
+  	info.GetReturnValue().Set(value);
 }
 
 /**
@@ -985,7 +997,8 @@ NAN_GETTER(Dataset::bandsGetter)
 NAN_GETTER(Dataset::layersGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("layers_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("layers_").ToLocalChecked());
+  	info.GetReturnValue().Set(value);
 }
 
 NAN_GETTER(Dataset::uidGetter)

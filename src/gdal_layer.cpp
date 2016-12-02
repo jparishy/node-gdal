@@ -9,6 +9,7 @@
 #include "gdal_geometry.hpp"
 #include "collections/layer_features.hpp"
 #include "collections/layer_fields.hpp"
+#include "utils/v8_helper.hpp"
 
 #include <stdlib.h>
 #include <sstream>
@@ -105,10 +106,10 @@ NAN_METHOD(Layer::New)
 		f->Wrap(info.This());
 
 		Local<Value> features = LayerFeatures::New(info.This());
-		info.This()->SetHiddenValue(Nan::New("features_").ToLocalChecked(), features);
+		v8_helper::SetPrivate(info.This(), Nan::New("features_").ToLocalChecked(), features);
 
 		Local<Value> fields = LayerFields::New(info.This());
-		info.This()->SetHiddenValue(Nan::New("fields_").ToLocalChecked(), fields);
+		v8_helper::SetPrivate(info.This(), Nan::New("fields_").ToLocalChecked(), fields);
 
 		info.GetReturnValue().Set(info.This());
 		return;
@@ -174,7 +175,7 @@ Local<Value> Layer::New(OGRLayer *raw, OGRDataSource *raw_parent, bool result_se
 	
 	wrapped->uid = ptr_manager.add(raw, parent_uid, result_set);
 	wrapped->parent_ds = raw_parent;
-	obj->SetHiddenValue(Nan::New("ds_").ToLocalChecked(), ds);
+	v8_helper::SetPrivate(obj, Nan::New("ds_").ToLocalChecked(), ds);
 
 	return scope.Escape(obj);
 }
@@ -395,7 +396,8 @@ NAN_METHOD(Layer::getLayerDefn)
 NAN_GETTER(Layer::dsGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("ds_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("ds_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 /**
@@ -486,7 +488,8 @@ NAN_GETTER(Layer::geomTypeGetter)
 NAN_GETTER(Layer::featuresGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("features_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("features_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 /**
@@ -497,7 +500,8 @@ NAN_GETTER(Layer::featuresGetter)
 NAN_GETTER(Layer::fieldsGetter)
 {
 	Nan::HandleScope scope;
-	info.GetReturnValue().Set(info.This()->GetHiddenValue(Nan::New("fields_").ToLocalChecked()));
+	Local<Value> value = v8_helper::GetPrivate(info.This(), Nan::New("fields_").ToLocalChecked());
+	info.GetReturnValue().Set(value);
 }
 
 NAN_GETTER(Layer::uidGetter)
