@@ -55,6 +55,13 @@
 				"src/collections/rasterband_pixels.cpp",
 				"src/collections/gdal_drivers.cpp"
 			],
+			"link_settings": {
+				"libraries":[
+					"-lkmlbase",
+					"-lkmldom",
+					"-lkmlengine"
+				]
+			},
 			"include_dirs": [
 				"<!(node -e \"require('nan')\")"
 			],

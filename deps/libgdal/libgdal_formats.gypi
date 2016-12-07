@@ -96,7 +96,8 @@
 			"./gyp-formats/ogr_sxf.gyp:libgdal_ogr_sxf_frmt",
 			"./gyp-formats/ogr_ntf.gyp:libgdal_ogr_ntf_frmt",
 			"./gyp-formats/ogr_xplane.gyp:libgdal_ogr_xplane_frmt",
-			"./gyp-formats/ogr_wasp.gyp:libgdal_ogr_wasp_frmt"
+			"./gyp-formats/ogr_wasp.gyp:libgdal_ogr_wasp_frmt",
+			"./gyp-formats/ogr_libkml.gyp:libgdal_ogr_libkml_frmt"
 		],
 		"gdal_format_defs": [
 			"GDAL_FORMATS=gtiff hfa aigrid aaigrid ceos ceos2 iso8211 xpm sdts raw dted mem jdem envisat elas fit vrt usgsdem l1b nitf bmp pcidsk airsar rs2 ilwis rmf leveller sgi srtmhgt idrisi gsg ingr ers jaxapalsar dimap gff cosar pds adrg coasp tsx terragen blx til r northwood saga xyz hf2 kmlsuperoverlay ctg e00grid zmap ngsgeoid iris map zlib jpeg png ",
@@ -196,7 +197,8 @@
 			"SXF_ENABLED=1",
 			"NTF_ENABLED=1",
 			"XPLANE_ENABLED=1",
-			"WASP_ENABLED=1"
+			"WASP_ENABLED=1",
+			"LIBKML_ENABLED=1"
 		]
 	}
 }

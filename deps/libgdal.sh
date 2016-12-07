@@ -113,7 +113,7 @@ GDAL_FORMATS="gtiff hfa aigrid aaigrid ceos ceos2 iso8211 xpm
 OGR_FORMATS="shape vrt avc geojson mem mitab kml gpx aeronavfaa
 	bna dxf csv edigeo geoconcept georss gml gmt gpsbabel gtm htf
 	idrisi dgn openair openfilegdb pds pgdump rec s57 sdts segukooa
-	segy sua svg sxf ntf xplane wasp"
+	segy sua svg sxf ntf xplane wasp libkml"
 
 mkdir -p $dir_formats_gyp
 
