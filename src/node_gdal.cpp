@@ -37,6 +37,7 @@
 #include "gdal_dataset.hpp"
 #include "gdal_rasterband.hpp"
 #include "gdal_warper.hpp"
+#include "gdal_utils.hpp"
 #include "gdal_algorithms.hpp"
 
 #include "gdal_layer.hpp"
@@ -228,6 +229,7 @@ namespace node_gdal {
 			Nan::SetMethod(target, "_isAlive", isAlive); // for tests
 
 			Warper::Initialize(target);
+			Utils::Initialize(target);
 			Algorithms::Initialize(target);
 
 			Driver::Initialize(target);
