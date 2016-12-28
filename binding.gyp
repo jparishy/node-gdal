@@ -58,9 +58,6 @@
 			],
 			"link_settings": {
 				"libraries":[
-					"-lkmlbase",
-					"-lkmldom",
-					"-lkmlengine"
 				]
 			},
 			"include_dirs": [
@@ -77,7 +74,8 @@
 			"xcode_settings": {
 				"GCC_ENABLE_CPP_EXCEPTIONS": "YES",
 				"OTHER_LDFLAGS":[
-					"-Wl,-bind_at_load"
+					"-Wl,-bind_at_load",
+					"-framework LibKML"
 				]
 			},
 			"conditions": [
