@@ -79,9 +79,18 @@
 				]
 			},
 			"conditions": [
-				["enable_logging == 'true'", {
-					"defines": [
-						"ENABLE_LOGGING=1"
+				['OS=="linux"', {
+					'link_settings': {
+						'libraries':[
+							"-lkmlbase",
+							"-lkmldom",
+							"-lkmlengine"
+						]
+					}
+				}],
+			["enable_logging == 'true'", {
+				"defines": [
+					"ENABLE_LOGGING=1"
 					]
 				}],
 				["shared_gdal == 'false'", {
