@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <cstdio>
 
 namespace node_gdal {
 
@@ -61,14 +62,18 @@ NAN_METHOD(Utils::vectorTranslate)
 	char *args[] = { (char *) "-t_srs", str, NULL };
 	opts = GDALVectorTranslateOptionsNew(args, NULL);
 
-	static int i = 0;
-	std::ostringstream dir;
-	dir << "/tmp/gdal_out_";
-	dir << i;
-	i++;
 
 	GDALDatasetH in = ds->getDataset();
-	GDALDataset *outDS = (GDALDataset *)GDALVectorTranslate(dir.str().c_str(), NULL, 1, &in, opts, &error);
+
+	char dir[] = "/tmp/gdal.vectorTranslate.XXXXXXXXXX";
+	mkdtemp(dir);
+
+	std::ostringstream path;
+	path << dir;
+	path << "/";
+	path << "tmp.gdal";
+
+	GDALDataset *outDS = (GDALDataset *)GDALVectorTranslate(path.str().c_str(), NULL, 1, &in, opts, &error);
 	GDALVectorTranslateOptionsFree(opts);
 
 	if(error != 0)
