@@ -21,13 +21,25 @@ describe('gdal', function() {
             }, "src dataset must be a vector dataset");
         });
 		it('should translate a vector dataset', function() {
-			var src = gdal.open(__dirname + '/data/shp/sample.shp');
+			var original = gdal.open(__dirname + '/data/shp/sample.shp');
+            var o_srs = original.layers.get(0).srs;
 			var t_srs = gdal.SpatialReference.fromUserInput('EPSG:4326');
-            var params = {
-                src: src,
+           
+           var toParams = {
+                src: original,
                 t_srs: t_srs
             };
-            gdal.vectorTranslate(params);
+
+            var to = gdal.vectorTranslate(toParams);
+            assert(t_srs.isSameGeogCS(to.layers.get(0).srs));
+
+           var backParams = {
+                src: to,
+                t_srs: o_srs
+            };
+
+            var back = gdal.vectorTranslate(backParams);
+            assert(back.layers.get(0).srs.isSameGeogCS(o_srs));
 		});
 	});
 });
