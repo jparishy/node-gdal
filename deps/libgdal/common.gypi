@@ -51,7 +51,11 @@
 		"cflags!": ["-fno-rtti", "-fno-exceptions"],
 		"conditions": [
 			["OS == 'win'", {
-				"include_dirs": ["./arch/win"],
+				"include_dirs": [
+					"./arch/win",
+					"C:\Program Files\LibKML\src",
+					"C:\Program Files\LibKML\include"
+				],
 				"VCCLCompilerTool": {
 					"DebugInformationFormat": "0"
 				},

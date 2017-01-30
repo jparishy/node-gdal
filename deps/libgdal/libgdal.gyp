@@ -298,14 +298,16 @@
 			"conditions": [
 				["OS == 'win'", {
 					"sources": [
-						"gdal/port/cpl_odbc.cpp"
+						"gdal/port/cpl_odbc.cpp",
+					],
+					"include_dirs": [
 					],
 					"link_settings": {
 						"libraries": [
 							"-lws2_32.lib",
 							"-lodbccp32.lib"
 						]
-					}
+					},
 				}]
 			],
 			"direct_dependent_settings": {

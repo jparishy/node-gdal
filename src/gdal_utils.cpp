@@ -25,6 +25,7 @@ NAN_METHOD(Utils::vectorTranslate)
 	GDALVectorTranslateOptions *opts;
 
 	Dataset* ds;
+	Dataset* outDS;
 	SpatialReference* t_srs;
 	int error = 0;
 
@@ -54,6 +55,24 @@ NAN_METHOD(Utils::vectorTranslate)
 		return;
 	}
 
+	if(obj->HasOwnProperty(Nan::New("dst").ToLocalChecked())){
+		prop = obj->Get(Nan::New("dst").ToLocalChecked());
+		if(prop->IsObject() && !prop->IsNull() && Nan::New(Dataset::constructor)->HasInstance(prop)){
+			outDS = Nan::ObjectWrap::Unwrap<Dataset>(prop.As<Object>());
+			if(!outDS->getDataset()) {
+				Nan::ThrowTypeError("dst dataset already closed");
+				return;
+			}
+		} else {
+			Nan::ThrowError("dst property must be a Dataset object");
+			return;
+		}
+	} else {
+		Nan::ThrowError("dst dataset must be provided");
+		return;
+	}
+
+
 	NODE_WRAPPED_FROM_OBJ(obj, "t_srs", SpatialReference, t_srs);
 
 	char *str = NULL;
@@ -64,16 +83,9 @@ NAN_METHOD(Utils::vectorTranslate)
 
 
 	GDALDatasetH in = ds->getDataset();
+	GDALDataset *out = outDS->getDataset();
 
-	char dir[] = "/tmp/gdal.vectorTranslate.XXXXXXXXXX";
-	mkdtemp(dir);
-
-	std::ostringstream path;
-	path << dir;
-	path << "/";
-	path << "tmp.gdal";
-
-	GDALDataset *outDS = (GDALDataset *)GDALVectorTranslate(path.str().c_str(), NULL, 1, &in, opts, &error);
+	out = (GDALDataset *)GDALVectorTranslate(NULL, out, 1, &in, opts, &error);
 	GDALVectorTranslateOptionsFree(opts);
 
 	if(error != 0)
@@ -82,7 +94,7 @@ NAN_METHOD(Utils::vectorTranslate)
 	}
 	else
 	{
-		info.GetReturnValue().Set(Dataset::New(outDS));
+		info.GetReturnValue().Set(Dataset::New(out));
 	}
 }
 
