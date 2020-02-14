@@ -11,7 +11,8 @@
 		'defines!': ["_HAS_EXCEPTIONS=0"],
 		"defines": [
 			"NOGDI=1",
-			"HAVE_LIBZ"
+			"HAVE_LIBZ",
+			"HAVE_CURL"
 		],
 		"xcode_settings": {
 			"GCC_ENABLE_CPP_EXCEPTIONS": "YES",
