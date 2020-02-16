@@ -174,6 +174,8 @@
 
 				# "gdal/port/cpl_win32ce_api.cpp",
 				# "gdal/port/vsipreload.cpp",
+				"gdal/port/cpl_sha256.cpp",
+				"gdal/port/cpl_aws.cpp",
 				"gdal/port/cpl_worker_thread_pool.cpp",
 				"gdal/port/cpl_atomic_ops.cpp",
 				"gdal/port/cpl_base64.cpp",
@@ -288,6 +290,11 @@
 				"./gdal/ogr/ogrsf_frmts/geojson",
 				"./gdal/frmts/jpeg/libjpeg"
 			],
+			"link_settings": {
+				"libraries": [
+					"-lcurl"
+				]
+			},
 			"dependencies": [
 				'<@(gdal_format_gyps)'
 			],
