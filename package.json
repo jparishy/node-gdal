@@ -24,7 +24,7 @@
     "module_name": "gdal",
     "module_path": "./lib/binding/{node_abi}-{platform}-{arch}",
     "remote_path": "./{module_name}/v{version}/{toolset}/",
-    "host": "https://mapbox-node-binary.s3.amazonaws.com",
+    "host": "https://jparishy-node-gdal-curl.sfo2.digitaloceanspaces.com",
     "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   },
   "repository": {
